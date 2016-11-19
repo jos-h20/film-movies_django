@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+{{ theater.name }}
+{% endblock %}
+
+{% block jumbotron %}
+<div class="jumbotron">
+    <h1>{{ theater.name }}</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+    <h2>{{ theater.name}}</h2>
+    <h4>Location: {{ theater.location }}</h4>
+    <h4>Films: </h4>
+        <ul>
+          {% for film in theater.films.all %}
+              <li><a href="{% url 'film' pk=film.pk %}">{{ film.title }}</a></li>
+          {% endfor %}
+        </ul>
+{% endblock %}

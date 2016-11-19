@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block title %}Genres{% endblock %}
+
+{% block jumbotron %}
+<div class="jumbotron">
+    <h1>Genres</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="genre_list">
+  {% for genre in genres %}
+      <a href="{% url 'genre' pk=genre.pk %}">{{ genre.name|linebreaks }}</a>
+  {% endfor %}
+</div>
+
+{% endblock %}

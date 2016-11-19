@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block title %}List of Films{% endblock %}
+
+{% block jumbotron %}
+<div class="jumbotron">
+    <h1>Films</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="film_list">
+  {% for film in films %}
+      <a href="{% url 'film' pk=film.pk %}">{{ film.title|linebreaks }}</a>
+  {% endfor %}
+</div>
+
+{% endblock %}

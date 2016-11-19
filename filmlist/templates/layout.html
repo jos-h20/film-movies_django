@@ -1,0 +1,30 @@
+{% load static from staticfiles %}
+
+
+<!doctype html>
+<html>
+  <head>
+    <title>{% block title %} {% endblock %}</title>
+    <!-- Latest compiled and minified CSS -->
+    <link rel="stylesheet" href="{% static 'css/layout.css' %}">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+    <!-- Optional theme -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+
+  </head>
+  <body>
+    {% block jumbotron %}
+
+    {% endblock %}
+    <div class="container">
+      <nav>
+        <a href="{% url 'home' %}">Home</a>
+        <a href="{% url 'films' %}">Films</a>
+        <a href="{% url 'theaters' %}">Theaters</a>
+        <a href="{% url 'genres' %}">Genres</a>
+      </nav>
+      {% block content %} {% endblock %}
+    </div>
+  </body>
+</html>

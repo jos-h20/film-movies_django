@@ -1,0 +1,17 @@
+{% extends "layout.html" %}
+{% block title %}Theaters{% endblock %}
+
+{% block jumbotron %}
+<div class="jumbotron">
+    <h1>Theaters</h1>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="theater_list">
+  {% for theater in theaters %}
+      <a href="{% url 'theater' pk=theater.pk %}">{{ theater.name|linebreaks }}</a>
+  {% endfor %}
+</div>
+
+{% endblock %}
