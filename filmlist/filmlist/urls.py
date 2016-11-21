@@ -18,6 +18,7 @@ from django.contrib import admin
 from rest_framework.urlpatterns import format_suffix_patterns
 from films import views
 
+
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^$', views.home, name='home'),
@@ -35,6 +36,7 @@ urlpatterns = [
     url(r'^api/genres$', views.api_genre_list),
     url(r'^genres/(?P<pk>[0-9]+)$', views.genre_detail, name='genre'),
     url(r'^api/genres/(?P<pk>[0-9]+)$', views.api_genre_detail),
+    url(r'^post_url$', views.post_film, name='post_film'),
     # url(r'^$', views.ListCreateFilm.as_view(), namespace='films'),
     # url(r'(?P<pk>\d+)$',
     #     views.RetrieveUpdateDestroyFilm.as_view(),

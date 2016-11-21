@@ -4,9 +4,12 @@ from django.shortcuts import render
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from django.http import HttpResponse
 
 from films.models import Film, Theater, Genre
 from films.serializers import FilmSerializer, TheaterSerializer, GenreSerializer, FilmWriteSerializer
+
+from films.forms import FilmForm
 
 # from . import serializers
 # from . import models
@@ -16,7 +19,8 @@ def home(request):
 
 def film_list(request):
     films = Film.objects.all()
-    return render(request, 'films/film_list.html', { 'films': films })
+    form = FilmForm()
+    return render(request, 'films/film_list.html', { 'films': films, 'form':form })
 
 def film_detail(request, pk):
     film = Film.objects.get(pk=pk)
@@ -41,6 +45,12 @@ def genre_detail(request, pk):
     genre = Genre.objects.get(pk=pk)
     return render(request, 'films/genre_detail.html', {'genre': genre})
 
+def post_film(request):
+    films = Film.objects.all()
+    form = FilmForm(request.POST)
+    if form.is_valid():
+        form.save(commit=True)
+    return render(request, 'films/film_list.html', {'films':films})
 
 
 
