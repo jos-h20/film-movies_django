@@ -1,11 +1,15 @@
-from rest_framework import generics
+from rest_framework import generics, permissions
 from django.shortcuts import render
 from films.models import Film, Theater, Genre
-from films.serializers import FilmSerializer, TheaterSerializer, GenreSerializer, FilmWriteSerializer, GenreWriteSerializer
+from films.serializers import FilmSerializer, TheaterSerializer, GenreSerializer, FilmWriteSerializer, GenreWriteSerializer, UserSerializer
 from django.http import Http404
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
+from films.permissions import IsOwnerOrReadOnly
+from django.contrib.auth.models import User
+from rest_framework.decorators import api_view
+import requests
 
 
 # class FilmList(APIView):
@@ -236,6 +240,23 @@ def post_film(request):
     if form.is_valid():
         form.save(commit=True)
     return render(request, 'films/film_list.html', {'films':films})
+@api_view(['GET', 'PUT', 'DELETE'])
+def film_title(request, format=None):
+    """
+    Get a list of films that have the word 'hunger' in the title
+    """
+    if request.method == 'GET':
+        payload = {'type': 'movie', 's': 'happy', 'y': '2009'}
+        films = requests.get('http://www.omdbapi.com/', params=payload)
+        json = films.json()
+        a = []
+        for key in json['Search']:
+            films_dict = {}
+            films_dict['title'] = key['Title']
+            films_dict['year_prod'] = key['Year']
+            a.append(films_dict)
+        serializedFilm = FilmSerializer(a, many=True)
+        return Response(serializedFilm.data)
 #
 #
 #
@@ -402,6 +423,8 @@ def post_film(request):
 class FilmList(generics.ListCreateAPIView):
     queryset = Film.objects.all()
     serializer_class = serializers.FilmSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                          IsOwnerOrReadOnly, permissions.IsAdminUser,)
 
     def get_serializer_class(self):
             if(self.request.method == 'GET'):
@@ -426,9 +449,14 @@ class FilmList(generics.ListCreateAPIView):
         else:
             return Response(FilmSerializer(Film.objects.all(), many=True).data)
 
+    def perform_create(self, serializer):
+        serializer.save(owner=self.request.user)
+
 class FilmDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Film.objects.all()
     serializer_class = serializers.FilmSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                          IsOwnerOrReadOnly, permissions.IsAdminUser,)
 
     def get_serializer_class(self):
             if(self.request.method == 'GET'):
@@ -450,14 +478,27 @@ class FilmDetail(generics.RetrieveUpdateDestroyAPIView):
 class TheaterList(generics.ListCreateAPIView):
     queryset = Theater.objects.all()
     serializer_class = serializers.TheaterSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                          IsOwnerOrReadOnly,)
+
 
 class TheaterDetail(generics.RetrieveUpdateDestroyAPIView):
     queryset = Theater.objects.all()
     serializer_class = serializers.TheaterSerializer
+    permission_classes = (permissions.IsAuthenticatedOrReadOnly,
+                          IsOwnerOrReadOnly,)
 
 class TheaterFilms(generics.RetrieveUpdateDestroyAPIView):
     queryset = Theater.objects.all()
     serializer_class = serializers.TheaterSerializer
+
+class UserList(generics.ListAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+
+class UserDetail(generics.RetrieveAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
 
 class GenreList(generics.ListCreateAPIView):
     queryset = Genre.objects.all()
